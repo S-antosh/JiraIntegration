@@ -1,0 +1,48 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-card title="Monthly Worklog Report">
+        <div class="slds-m-around_small">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-5">
+                    <lightning-input type="month" label="Select Month and Year" value={selectedMonthYear} onchange={handleMonthYearChange} class={selectedMonthYearClass}></lightning-input>
+                    <template if:true={selectMonthYearError}>
+                        <div
+                            class="slds-form-element__help slds-theme_error">
+                        {selectMonthYearError}
+                        </div>
+                    </template>
+                </div>
+                
+                <div class="slds-col slds-size_1-of-5">
+                    <lightning-input type="text" label="Employee" value={searchTerm} onchange={handleEmployeeChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-5 slds-align_absolute-center">
+                    <lightning-button label="Fetch Logs" onclick={fetchLogs}></lightning-button>
+                </div>
+                <div class="slds-col slds-size_1-of-5 slds-align_absolute-center">
+                    <lightning-button label="Export" onclick={ExportData}></lightning-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spinner -->
+        <template if:true={isLoading}>
+            <div class="slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Data Table -->
+        <template if:false={isLoading}>
+            <div class="slds-m-around_medium">
+                <lightning-datatable
+                    key-field="sNo    "
+                    data={filteredData}
+                    columns={tableColumns}
+                    hide-checkbox-column="true"
+                ></lightning-datatable>
+            </div>
+        </template>
+    </lightning-card>
+</template>

@@ -1,7 +1,7 @@
 public class JiraRestClient {
     
     private static final String ENDPOINT_URL = 'callout:JiraAuth/rest/api/3/search?jql=';
-    private static final String CUSTOMFIELD_START_DATE = 'customfield_10015';
+    private static final String CUSTOMFIELD_START_DATE = 'customfield_10020.';
     private static final String CUSTOMFIELD_PLANNED_END_DATE = 'customfield_10048';
     private static final String CUSTOMFIELD_DUE_DATE = 'duedate';
 
@@ -98,7 +98,7 @@ public class JiraRestClient {
         // yelle chai just existing records jun chai aile json file ma ako kura sanga name match khanxa tyo records haru lai chai save garera rakhne kaam garxa
         // yesto garera update garnu parne records haru kk cha tyo chai sabai eutai thau ma rakhdinxa jalle chai upsert lagauna sajilo pardinxa
         if (!jiraKeys.isEmpty()) {
-            for (Jira__c existingRecord : [SELECT Id, Name, Type__c, Summary__c, Status__c, Reporter__c, Assignee__c, StartDate__c, Expected_Time_Tracking__c, DueDate__c, ParentName__c, Actual_Time_Tracking__c FROM Jira__c WHERE Name IN :jiraKeys]) {
+            for (Jira__c existingRecord : [SELECT Id, Name, Type__c, Summary__c, Status__c, Reporter__c, Assignee__c, StartDate__c, Expected_Time_Tracking__c, DueDate__c, ParentName__c, Actual_Time_Tracking__c , Aggregate_Time_Tracking__c FROM Jira__c WHERE Name IN :jiraKeys]) {
                 existingJiraRecords.put(existingRecord.Name, existingRecord);
             }
         }
@@ -198,18 +198,40 @@ public class JiraRestClient {
         jiraRecord.Assignee__c = getUserByName(null);
     }
 
+   
     // Safely parse Start Date
     String startDateString = fields != null && fields.containsKey(CUSTOMFIELD_START_DATE) ? (String) fields.get(CUSTOMFIELD_START_DATE) : null;
-    jiraRecord.StartDate__c = Date.today();
+  //  jiraRecord.StartDate__c = Date.today();
+  //  jiraRecord.DueDate__c = Date.today(); // Assuming you want to set it to the current date.
+ 
+    if (fields != null) {
+            if (fields.containsKey(CUSTOMFIELD_START_DATE) && (String) fields.get(CUSTOMFIELD_START_DATE) != null ) {
+                String startDateStr = (String) fields.get(CUSTOMFIELD_START_DATE);
+                jiraRecord.StartDate__c = parseDate(startDateStr);
+            }else{
+                jiraRecord.StartDate__c = Date.today();
+            }
+            if (fields.containsKey(CUSTOMFIELD_DUE_DATE)&& (String) fields.get(CUSTOMFIELD_DUE_DATE) != null ) {
+                String dueDateStr = (String) fields.get(CUSTOMFIELD_DUE_DATE);
+                jiraRecord.DueDate__c = parseDate(dueDateStr);
+            }else{
+                jiraRecord.DueDate__c = Date.today(); 
+            }
+     }
+ 
+     Integer AggregateTimeSpend = fields != null && fields.containsKey('aggregatetimespent') ? (Integer) fields.get('aggregatetimespent') : null;
+    jiraRecord.Aggregate_Time_Tracking__c = AggregateTimeSpend != null ? convertSecondsToDHMS(AggregateTimeSpend) : null;
 
     Integer timeSpentSeconds = fields != null && fields.containsKey('timespent') ? (Integer) fields.get('timespent') : null;
-    jiraRecord.Expected_Time_Tracking__c = timeSpentSeconds != null ? convertSecondsToDHMS(timeSpentSeconds) : null;
+    jiraRecord.Actual_Time_Tracking__c = timeSpentSeconds != null ? convertSecondsToDHMS(timeSpentSeconds) : null;
+    String endDateString = (String) fields.get(CUSTOMFIELD_PLANNED_END_DATE) != null && fields.containsKey(CUSTOMFIELD_PLANNED_END_DATE) ? (String) fields.get(CUSTOMFIELD_PLANNED_END_DATE) : null;
 
-    jiraRecord.DueDate__c = Date.today(); // Assuming you want to set it to the current date.
+
+    // Assumig you want to set it to the current date.
     jiraRecord.ParentName__c = fields != null && fields.containsKey('parent') ? (String) ((Map<String, Object>) fields.get('parent')).get('key') : null;
 
     Integer actualTimeInSeconds = fields != null && fields.containsKey('aggregatetimeoriginalestimate') ? (Integer) fields.get('aggregatetimeoriginalestimate') : null;
-    jiraRecord.Actual_Time_Tracking__c = actualTimeInSeconds != null ? convertSecondsToDHMS(actualTimeInSeconds) : null;
+    jiraRecord.Expected_Time_Tracking__c = actualTimeInSeconds != null ? convertSecondsToDHMS(actualTimeInSeconds) : null;
 
     return jiraRecord;
 }
@@ -224,7 +246,9 @@ public class JiraRestClient {
                existingRecord.Expected_Time_Tracking__c != newRecord.Expected_Time_Tracking__c ||
                existingRecord.DueDate__c != newRecord.DueDate__c ||
                existingRecord.ParentName__c != newRecord.ParentName__c ||
-               existingRecord.Actual_Time_Tracking__c != newRecord.Actual_Time_Tracking__c;
+               existingRecord.Actual_Time_Tracking__c != newRecord.Actual_Time_Tracking__c||
+               existingRecord.Aggregate_Time_Tracking__c!=newRecord.Aggregate_Time_Tracking__c;
+               
     }
 
     private static String convertSecondsToDHMS(Integer totalSeconds) {
@@ -248,6 +272,17 @@ public class JiraRestClient {
                 return users[0].Id;
             }
         }
-        return '005dL0000017lpjQAA'; // Default user ID if not found
+        return '005dL000002kfyJQAQ'; // Default user ID if not found
     }
+    private static Date parseDate(String dateString) {
+    	if (String.isNotEmpty(dateString)) {
+            try {
+                // Adjust the date format if necessary to match the format of dateString
+                return Date.valueOf(dateString);
+            } catch (Exception e) {
+                System.debug('Date parsing failed: ' + e.getMessage());
+            }
+    	}
+    	return null;
+	}
 }

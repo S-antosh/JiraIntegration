@@ -34,28 +34,26 @@ public class TimeDifferenceCalculator {
         /*
          * @description: Convert the total time to minutes
          */
-        return (days * 24 * 60) + (hours * 60) + minutes;
+        return (days * 8 * 60) + (hours * 60) + minutes;
     }
     /*
      * @description: Method to convert total minutes back to 'X days Y hours Z minutes' format
      */
     public static String convertToTimeFormat(Integer totalMinutes) {
-        Integer days = totalMinutes / (24 * 60);
-    	totalMinutes = Math.mod(totalMinutes, 24 * 60); 
-    	Integer hours = totalMinutes / 60; 
-    	Integer minutes = Math.mod(totalMinutes, 60);
-    	return days + ' days ' + hours + ' hours ' + minutes + ' minutes';
+        Integer days = totalMinutes / (8 * 60);
+        totalMinutes = Math.mod(totalMinutes, 8 * 60); 
+        Integer hours = totalMinutes / 60; 
+        Integer minutes = Math.mod(totalMinutes, 60);
+        return days + ' days ' + hours + ' hours ' + minutes + ' minutes';
     }
-    
     /*
      * @description: Method to calculate the difference between two time strings
      */
     public static String calculateTimeDifference(String timeString1, String timeString2) {
         Integer minutes1 = convertToMinutes(timeString1);
         Integer minutes2 = convertToMinutes(timeString2);
-
-        Integer differenceInMinutes = minutes1 - minutes2;
-       
+ 
+        Integer differenceInMinutes = minutes2 - minutes1;
         return convertToTimeFormat(differenceInMinutes);
     }
 }
