@@ -20,10 +20,13 @@
                     <lightning-input type="text" label="Employee" value={searchTerm}  disabled={isDateSelected} onchange={handleEmployeeChange}></lightning-input>
                 </div>
                 <div class="slds-col slds-size_1-of-5 slds-align_absolute-center">
-                    <lightning-button label="Fetch Logs" onclick={fetchLogs}  disabled={isDateSelected} class={elseError}></lightning-button>
+                    <lightning-button  variant="brand" label="Fetch Logs" onclick={fetchLogs}  disabled={isDateSelected} class={elseError}></lightning-button>
                     <!-- <template if:true={elseError}>
                         <div class="slds-form-element__help slds-theme_error">{elseError}</div>
                     </template> -->
+                </div>
+                <div class="slds-col slds-size_1-of-5 slds-align_absolute-center">
+                    <lightning-button variant="brand" label="Export" title="Export data to CSV" disabled={isDateSelected} icon-name="utility:download" class="slds-m-left_x-small"   onclick={exportHandler}></lightning-button>
                 </div>
             </div>
         </div>

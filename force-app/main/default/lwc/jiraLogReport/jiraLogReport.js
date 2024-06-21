@@ -291,4 +291,31 @@ export default class LogTable extends LightningElement {
         const minutes = Math.floor(seconds / 60);
         return `${days}d ${hours}h ${minutes}m`;
     }
+
+    exportHandler(){
+        console.log('click vako xa ')
+       
+        const rows = this.filteredData;
+        if (!rows || rows.length === 0) {
+            return;
+        }
+
+        const columns = this.tableColumns.map(col => col.label);
+        let csvContent = columns.join(",") + "\n";
+
+        rows.forEach(row => {
+            let rowData = this.tableColumns.map(col => row[col.fieldName]);
+            csvContent += rowData.join(",") + "\n";
+        });
+
+       this.createLinkForDownload(csvContent);
+    }
+  
+    createLinkForDownload(csvFile) {
+        const downLink = document.createElement("a");
+        downLink.href = "data:text/csv;charset=utf-8," + encodeURI(csvFile);
+        downLink.target = '_blank';
+        downLink.download = "DailyWorklogData.csv"
+        downLink.click();
+    }
 }

@@ -13,9 +13,8 @@ export default class WorklogReport extends LightningElement {
         this.selectedMonthYear = event.target.value;
         this.selectMonthYearError = '';
         if (new Date(this.selectedMonthYear) > new Date()) {
-            this.selectMonthYearError = ' Date should not be greater than today\'s Date';
+            this.selectMonthYearError = 'Date should not be greater than today\'s Date';
         }
-       
     }
   
     handleEmployeeChange(event) {
@@ -32,7 +31,7 @@ export default class WorklogReport extends LightningElement {
     }
 
     async fetchLogs() {
-        if (this.selectedMonthYear&&!this.selectMonthYearError) {
+        if (this.selectedMonthYear && !this.selectMonthYearError) {
             this.isLoading = true;
             try {
                 const result = await getAllLogs();
@@ -58,7 +57,7 @@ export default class WorklogReport extends LightningElement {
             { label: 'Actual Working Days', fieldName: 'actualWorkingDays', type: 'number' },
             { label: 'Expected Monthly Work Hrs', fieldName: 'expectedMonthlyWorkHrs', type: 'number' },
             { label: 'Expected Productive Working Hrs', fieldName: 'expectedProductiveWorkHrs', type: 'number' },
-            { label: 'Actual Logged Hrs', fieldName: 'actualLoggedHrs', type: 'number' }
+            { label: 'Actual Logged Hrs', fieldName: 'actualLoggedHrs', type: 'text' }
         ];
     }
 
@@ -93,7 +92,7 @@ export default class WorklogReport extends LightningElement {
                     actualWorkingDays,
                     expectedMonthlyWorkHrs,
                     expectedProductiveWorkHrs,
-                    actualLoggedHrs
+                    actualLoggedHrs: this.formatLoggedHours(actualLoggedHrs)
                 };
 
                 tableData.push(rowData);
@@ -101,6 +100,18 @@ export default class WorklogReport extends LightningElement {
         }
         this.tableData = tableData;
     }
+
+    formatLoggedHours(hours) {
+        const totalSeconds = Math.round(hours * 3600); // Round total seconds to avoid floating point issues
+        
+        const hrs = Math.floor(totalSeconds / 3600);
+        const mins = Math.floor((totalSeconds % 3600) / 60);
+        const secs = totalSeconds % 60;
+        
+        return `${hrs > 0 ? hrs + 'h ' : ''}${mins > 0 ? mins + 'm ' : ''}${secs > 0 ? secs + 's' : '0s'}`.trim();
+    }
+    
+    
 
     calculateWorkingDays(year, month) {
         const startDate = new Date(year, month - 1, 1);
@@ -121,31 +132,31 @@ export default class WorklogReport extends LightningElement {
             console.error('No data to export.');
             return;
         }
-    
+
         try {
             // Step 1: Prepare CSV data
             const csvRows = [];
-    
+
             // Add header row
             const headerRow = Object.keys(this.tableData[0]).join(',');
             csvRows.push(headerRow);
             console.log('Header row:', headerRow);
-    
+
             // Add data rows
             this.tableData.forEach(row => {
                 const values = Object.values(row).join(',');
                 csvRows.push(values);
             });
             console.log('CSV Rows:', csvRows);
-    
+
             // Step 2: Combine rows into CSV string
             const csvString = csvRows.join('\n');
             console.log('CSV String:', csvString);
-    
+
             // Step 3: Create a data URI
             const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString);
             console.log('Data URI created:', dataUri);
-    
+
             // Step 4: Create a link element, trigger download
             const link = document.createElement('a');
             link.href = dataUri;
@@ -153,7 +164,7 @@ export default class WorklogReport extends LightningElement {
             document.body.appendChild(link);
             link.click();
             console.log('Download triggered');
-    
+
             // Step 5: Clean up
             document.body.removeChild(link);
             console.log('Cleanup done');
@@ -161,11 +172,13 @@ export default class WorklogReport extends LightningElement {
             console.error('Error during CSV export:', error);
         }
     }
-    
-    get selectMonthYearError(){
-        return this.selectMonthYearError?'slds-has-error':'';
+
+    get isMonthYearSelected() {
+        return !this.selectedMonthYear || this.selectedMonthYear.trim().length === 0;
     }
     
-    
-    
+
+    get selectMonthYearError(){
+        return this.selectMonthYearError ? 'slds-has-error' : '';
+    }
 }
