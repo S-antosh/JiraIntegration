@@ -26,14 +26,14 @@ public class JiraRestClient {
         
         //Pass the project Name by looping into selectedValues
         for (String projectName : projectNames) {
-            System.debug('Project Name:********* ' + projectName);
+          
             performHttpRequestWithNamedCredential(projectName);
         }
     }
     @AuraEnabled
     public static String performHttpRequestWithNamedCredential(String selectedValues) {
         // frontend bata select vako value chai airakheko xa hai
-        System.debug(selectedValues);
+       
         HttpResponse res;
         String responseBody = '';
         String projectData;
@@ -48,7 +48,7 @@ public class JiraRestClient {
         if (selectedProjectAddress != null) {
             HttpRequest req = new HttpRequest();
             req.setEndpoint(ENDPOINT_URL + selectedProjectAddress);
-            System.debug(ENDPOINT_URL + selectedProjectAddress);
+          
             req.setMethod('GET');
 
             // Create HTTP connection
@@ -59,7 +59,7 @@ public class JiraRestClient {
                 // Handle the response
                 if (res.getStatusCode() == 200) {
                     // Successful request
-                    System.debug('Response: ' + res.getBody());
+                  
                     
                     responseBody = res.getBody();
                     
@@ -97,14 +97,9 @@ public class JiraRestClient {
         
         // yelle chai key-value pair ma separate handido raixa, hamlai chai issues vanne key chaiyeko ho jun chai hami line 77 ma garirakheko xam.
         
-        for(string i : jsonMap.keySet()){
-         	system.debug('ma eta chu');
-            system.debug(i);
-        }
+        
         List<Object> issuesList = (List<Object>) jsonMap.get('issues');
-        for(Object i : issuesList){
-            system.debug(i);
-        }
+        
         List<Jira__c> jiraRecordsToUpdate = new List<Jira__c>();
         List<Jira__c> jiraRecordsToInsert = new List<Jira__c>();
 
@@ -115,8 +110,8 @@ public class JiraRestClient {
             Map<String, Object> issue = (Map<String, Object>) issueObj;
             jiraKeys.add((String) issue.get('key'));
         }
-        system.debug('jiraKeys eta cha ');
-        system.debug(jiraKeys);
+       
+      
         // Process worklogs for all Jira keys
         WorklogProcessor.processWorklogs(jiraKeys);
         

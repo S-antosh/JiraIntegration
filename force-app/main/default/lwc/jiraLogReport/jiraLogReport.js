@@ -1,5 +1,6 @@
 import { LightningElement, track } from 'lwc';
 import getAllLogs from '@salesforce/apex/LogService.getAllLogs';
+import createWorklogFormJS from '@salesforce/apex/CreateWorklogFormJS.createWorklogFormJS';
 
 export default class LogTable extends LightningElement {
     @track tableData = [];
@@ -26,6 +27,7 @@ export default class LogTable extends LightningElement {
         try {
             const result = await getAllLogs();
             this.allLogs = JSON.parse(result); // Store the prefetched logs
+            await createWorklogFormJS({ jsonResult: result });
         } catch (error) {
             console.error('Error fetching logs:', error);
         } finally {
