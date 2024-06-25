@@ -39,7 +39,8 @@ public static void processWorklogs(Set<String> jiraKeys) {
                 DateTime standardDateTimeString = DateTime.valueOf(originalDateTimeString.replace('T', ' '));
 				Date createdDate = standardDateTimeString.date();
 				Time createdTime = standardDateTimeString.time();
-                LogService.addLog(displayName,timespent,jiraKey,timeSpentSeconds,createdDate,createdTime); 
+                String id = (String)worklog.get('id');
+                LogService.addLog(displayName,timespent,jiraKey,timeSpentSeconds,createdDate,createdTime,id); 
 
             }
         } else {
