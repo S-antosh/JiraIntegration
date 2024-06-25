@@ -310,7 +310,21 @@ export default class LogTable extends LightningElement {
         this.showModal = false;
     }
 
- 
+    get isDateSelected() {
+        return !(!this.startDateError && !this.endDateError && this.startDate && this.endDate);
+    }
+
+    get startDateClass() {
+        return this.startDateError ? 'slds-has-error' : '';
+    }
+
+    get endDateClass() {
+        return this.endDateError ? 'slds-has-error' : '';
+    }
+    get elseError() {
+        return this.elseError ? 'slds-has-error' : '';
+    }
+
     exportHandler(){
         console.log('click vako xa ')
        
