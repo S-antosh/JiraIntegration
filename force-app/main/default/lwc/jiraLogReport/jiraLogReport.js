@@ -71,8 +71,9 @@ export default class LogTable extends LightningElement {
         if (!this.searchTerm) {
             return this.tableData;
         }
+        const searchTerms = this.searchTerm.split(',').map(term => term.trim());
         return this.tableData.filter(record =>
-            record.displayName.toLowerCase().includes(this.searchTerm)
+            searchTerms.some(term => record.displayName.toLowerCase().includes(term))
         );
     }
 

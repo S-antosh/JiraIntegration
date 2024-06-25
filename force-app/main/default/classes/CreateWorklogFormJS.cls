@@ -40,20 +40,6 @@ public with sharing class CreateWorklogFormJS {
                 }
             }
 
-            // //Insert the data
-            // if (!totalRecordData.isEmpty()) {
-            //     Database.SaveResult[] insertResults = Database.insert(totalRecordData, false);
-                
-            //     // Handle any errors
-            //     for (Database.SaveResult result : insertResults) {
-            //         if (!result.isSuccess()) {
-            //             // Log the error
-            //             for (Database.Error error : result.getErrors()) {
-            //                 System.debug('Error inserting record: ' + error.getMessage());
-            //             }
-            //         }
-            //     }
-            // }
             
             // Upsert the data using JiraKey__c as the external ID field
             if (!totalRecordData.isEmpty()) {
