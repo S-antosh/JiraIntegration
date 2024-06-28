@@ -165,6 +165,10 @@ export default class WorklogReport extends LightningElement {
     get selectMonthYearError(){
         return this.selectMonthYearError?'slds-has-error':'';
     }
+
+    get isSelectedMonthYear(){
+        return 
+    }
     
     
     

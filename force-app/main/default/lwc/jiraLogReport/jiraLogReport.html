@@ -1,25 +1,33 @@
-<!-- sldsValidatorIgnore -->
-<!-- sldsValidatorIgnore -->
 <template>
     <lightning-card title="Log Table">
         <div class="slds-m-around_medium">
-            <div class="slds-grid slds-gutters">
-                <div class="slds-col slds-size_1-of-8">
+            <!-- First row for date and employee search inputs -->
+            <div class="slds-grid slds-gutters slds-wrap">
+                <div class="slds-col slds-size_1-of-4">
                     <lightning-input type="date" label="Start Date" value={startDate} onchange={handleStartDateChange} class={startDateClass}></lightning-input>
                     <template if:true={startDateError}>
                         <div class="slds-form-element__help slds-theme_error">{startDateError}</div>
                     </template>
                 </div>
-                <div class="slds-col slds-size_1-of-8">
+                <div class="slds-col slds-size_1-of-4">
                     <lightning-input type="date" label="End Date" value={endDate} onchange={handleEndDateChange}  class={endDateClass}></lightning-input>
                     <template if:true={endDateError}>
                         <div class="slds-form-element__help slds-theme_error">{endDateError}</div>
                     </template>
                 </div>
                 <div class="slds-col slds-size_1-of-4">
-                    <lightning-input type="text" label="Employee Search" value={searchTerm}  class={elseError} disabled={isDateSelected} onchange={handleEmployeeChange}></lightning-input>
+                    <lightning-input type="text" label="Employee Search" value={searchTerm} class={elseError} disabled={isDateSelected} onchange={handleEmployeeChange}></lightning-input>
                 </div>
-                <div class="slds-col slds-size_1-of-6">
+                <div class="slds-col slds-size_1-of-12 slds-align-bottom">
+                    <lightning-button label="Fetch Logs" variant="brand" onclick={fetchLogs} disabled={isDateSelected} class={elseError}></lightning-button>
+                </div>
+                <div class="slds-col slds-size_1-of-12 slds-align-bottom">
+                    <lightning-button label="Export CSV" variant="brand" onclick={exportHandler} disabled={isDateSelected} icon-name="utility:download"></lightning-button>
+                </div>
+            </div>
+            <!-- Second row for search set inputs and buttons -->
+            <div class="slds-grid slds-gutters slds-m-top_medium slds-wrap">
+                <div class="slds-col slds-size_1-of-4">
                     <lightning-combobox
                         name="searchSet"
                         label="Search Set"
@@ -30,27 +38,24 @@
                         disabled={isDateSelected}>
                     </lightning-combobox>
                 </div>
-            </div>
-            <div class="slds-grid slds-gutters slds-m-top_medium">
-                <div class="slds-col slds-size_1-of-5">
-                    <lightning-button label="Fetch Logs" variant="brand" onclick={fetchLogs} disabled={isDateSelected} class={elseError}></lightning-button>
+                <div class="slds-col slds-size_1-of-4 slds-align-bottom">
+                    <lightning-button label="Update Search Set" variant="brand" disabled={isDateSelected} onclick={updateSearchSet}></lightning-button>
                 </div>
-                <div class="slds-col slds-size_1-of-5">
-                    <lightning-button label="Export CSV" variant="brand" onclick={exportHandler} disabled={isDateSelected} icon-name="utility:download" class="slds-m-left_x-small"></lightning-button>
-                </div>
-                <div class="slds-col slds-size_1-of-5">
+                <div class="slds-col slds-size_1-of-4 slds-align-bottom">
                     <lightning-button label="Save Search Set" variant="brand" disabled={isDateSelected} onclick={saveSearchSet}></lightning-button>
                 </div>
-                <div class="slds-col slds-size_1-of-5">
+                <div class="slds-col slds-size_1-of-4 slds-align-bottom">
                     <lightning-button label="Delete Search Set" variant="destructive" disabled={isDateSelected} onclick={deleteSearchSet}></lightning-button>
                 </div>
             </div>
+            <!-- Loading spinner and error message -->
             <template if:true={isLoading}>
                 <div class="slds-align_absolute-center slds-m-top_medium">
                     <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
                 </div>
             </template>
             <div if:true={elseError} class="slds-text-color_error slds-m-top_small">{elseError}</div>
+            <!-- Data table -->
             <div class="slds-m-top_medium">
                 <lightning-datatable 
                     data={filteredData} 

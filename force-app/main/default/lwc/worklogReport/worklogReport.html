@@ -15,13 +15,14 @@
                 </div>
                 
                 <div class="slds-col slds-size_1-of-5">
-                    <lightning-input type="text" label="Employee" value={searchTerm} onchange={handleEmployeeChange}></lightning-input>
+                    <lightning-input type="text" label="Employee" value={searchTerm} onchange={handleEmployeeChange} disabled={isselectedMonthYear}></lightning-input>
                 </div>
                 <div class="slds-col slds-size_1-of-5 slds-align_absolute-center">
-                    <lightning-button label="Fetch Logs" onclick={fetchLogs}></lightning-button>
+                    <lightning-button label="Fetch Logs" onclick={fetchLogs} disabled={isselectedMonthYear}></lightning-button>
                 </div>
+                
                 <div class="slds-col slds-size_1-of-5 slds-align_absolute-center">
-                    <lightning-button label="Export" onclick={ExportData}></lightning-button>
+                    <lightning-button label="Export" onclick={ExportData} disabled={isselectedMonthYear}></lightning-button>
                 </div>
             </div>
         </div>

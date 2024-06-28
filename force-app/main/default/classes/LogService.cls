@@ -8,8 +8,9 @@ public class LogService {
         public Time createdTime { get; set; }
         public String jiraKey { get; set; }
         public String id { get;set; }
+        public String emailAddress{ get; set; }
 
-        public LogEntry(String displayName,String timeSpent , String jiraKey, Integer timeSpentSeconds, Date createdDate, Time createdTime,String id) {
+        public LogEntry(String displayName,String emailAddress,String timeSpent , String jiraKey, Integer timeSpentSeconds, Date createdDate, Time createdTime,String id) {
             this.displayName = displayName;
             this.timeSpent=timeSpent;
             this.timeSpentSeconds = timeSpentSeconds;
@@ -17,14 +18,15 @@ public class LogService {
             this.createdTime = createdTime;
             this.jiraKey = jiraKey;
             this.id = id;
+            this.emailAddress=emailAddress;
         }
     }
 
     // Static Map to store person's log entries
     private static Map<String, List<LogEntry>> personLogs = new Map<String, List<LogEntry>>();
 
-    public static void addLog(String displayName,String timeSpent, String jiraKey, Integer timeSpentSeconds, Date createdDate, Time createdTime,String id) {
-        LogEntry logEntry = new LogEntry(displayName, timeSpent,jiraKey, timeSpentSeconds, createdDate, createdTime, id);
+    public static void addLog(String displayName,string emailAddress,String timeSpent, String jiraKey, Integer timeSpentSeconds, Date createdDate, Time createdTime,String id) {
+        LogEntry logEntry = new LogEntry(displayName,emailAddress, timeSpent,jiraKey, timeSpentSeconds, createdDate, createdTime, id);
 
         if (!personLogs.containsKey(displayName)) {
             // Initialize a new list for this person

@@ -17,4 +17,11 @@ public with sharing class SearchSetController {
         Search_Set__c searchSet = [SELECT Id FROM Search_Set__c WHERE Id = :searchSetId LIMIT 1];
         delete searchSet;
     }
+    @AuraEnabled
+    public static void updateSearchSet(Id searchSetId, String employeeNames) {
+        Search_Set__c existingSet = [SELECT Id, Employee_Names__c FROM Search_Set__c WHERE Id = :searchSetId];
+        existingSet.Employee_Names__c = employeeNames;
+        update existingSet;
+    }
 }
+
