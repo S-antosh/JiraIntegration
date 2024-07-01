@@ -1,0 +1,13 @@
+.slds-scrollable_y {
+    max-height: 500px; /* Adjust as needed */
+    overflow-y: auto;
+}
+
+.slds-scrollable_x {
+    overflow-x: auto;
+}
+
+.datatable-container {
+    display: block;
+    width: 100%;
+}

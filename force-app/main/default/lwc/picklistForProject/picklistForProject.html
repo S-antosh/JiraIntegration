@@ -1,0 +1,13 @@
+<template>
+    <lightning-card title="Load Jira Records" icon-name="utility:picklist_type">
+    <div class="slds-p-around_medium">
+    <lightning-combobox
+                    name="project"
+                    label="Project"
+                    placeholder="Select a project"
+                    options={projectOptions}
+                    onchange={handleProjectChange}>
+    </lightning-combobox> 
+    </div>
+    </lightning-card>
+    </template>

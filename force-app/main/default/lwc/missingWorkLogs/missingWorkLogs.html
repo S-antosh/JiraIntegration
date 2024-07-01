@@ -1,0 +1,31 @@
+<template>
+    <lightning-card title="Missing Work Logs">
+        <div class="slds-p-around_medium">
+            <lightning-combobox
+                name="dateRange"
+                label="Select Date Range"
+                value={days}
+                placeholder="Select Date Range"
+                options={dateRangeOptions}
+                onchange={handleDaysChange}
+            ></lightning-combobox>
+        </div>
+        
+        <template if:true={workLogs}>
+            <div class="slds-scrollable_y">
+                <lightning-datatable
+                    key-field="id"
+                    data={workLogs}
+                    columns={columns}
+                    resize-column-disabled="true"
+                ></lightning-datatable>
+            </div>
+        </template>
+        
+        <template if:true={error}>
+            <div class="slds-text-color_error">
+                Error fetching data: {error}
+            </div>
+        </template>
+    </lightning-card>
+</template>
