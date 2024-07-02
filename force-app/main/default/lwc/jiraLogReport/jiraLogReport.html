@@ -29,7 +29,7 @@
                         <div class="slds-form-element__help slds-theme_error">{endDateError}</div>
                     </template>
                 </div>
-                <div class="slds-col slds-size_1-of-8 slds-text-align_right slds-align-bottom ">
+                <div class="slds-col slds-size_1-of-8  slds-align-bottom  ">
                     <lightning-button 
                         label="Fetch Logs" 
                         variant="brand" 
@@ -50,11 +50,18 @@
                             onchange={handleEmployeeChange}>
                         </lightning-input>
                     </div>
-                    <div class="slds-col slds-size_1-of-8 slds-align-bottom ">
+                    <div  class="slds-col slds-size_1-of-8 slds-align-bottom ">
                         <lightning-button 
                             label="Save Search Set" 
                             variant="brand"
                             onclick={saveSearchSet}>
+                        </lightning-button>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8 slds-align-bottom ">
+                        <lightning-button
+                            label="Update Search Set"
+                            variant="brand"
+                            onclick={updateSearchSet}>
                         </lightning-button>
                     </div>
                     <div class="slds-col slds-size_1-of-8 slds-align-bottom ">

@@ -4,6 +4,7 @@ import createWorklogFormJS from '@salesforce/apex/CreateWorklogFormJS.createWork
 import getSearchSets from '@salesforce/apex/SearchSetController.getSearchSets';
 import saveSearchSet from '@salesforce/apex/SearchSetController.saveSearchSet';
 import deleteSearchSet from '@salesforce/apex/SearchSetController.deleteSearchSet';
+import updateSearchSet from '@salesforce/apex/SearchSetController.updateSearchSet';
 
 export default class LogTable extends LightningElement {
     @track tableData = [];
@@ -63,7 +64,21 @@ export default class LogTable extends LightningElement {
             }
         }
     }
-
+    async updateSearchSet() {
+        this.isLoading = true;
+        try {
+            // Ensure selectedSearchSet is used as the searchSetId
+            await updateSearchSet({ searchSetId: this.selectedSearchSet, employeeNames: this.searchTerm });
+           // await this.fetchSearchSets();
+            alert('Search set updated successfully');
+        } catch (error) {
+            console.error('Error updating search set:', error);
+            const errorMessage = error.body ? error.body.message : 'An unknown error occurred';
+            alert('Error updating search set: ' + errorMessage);
+        } finally {
+            this.isLoading = false;
+        }
+    }
     async prefetchLogs() {
         this.isLoading = true;
         try {

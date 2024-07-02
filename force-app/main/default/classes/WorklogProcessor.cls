@@ -33,6 +33,7 @@ public static void processWorklogs(Set<String> jiraKeys) {
             for (Object worklogObj : worklogs) {
                 Map<String, Object> worklog = (Map<String, Object>) worklogObj;
                 String displayName = ((Map<String, Object>) worklog.get('author')).get('displayName').toString();
+                String emailAddress = ((Map<String, Object>) worklog.get('author')).get('emailAddress').toString();
                 Integer timeSpentSeconds = (Integer) worklog.get('timeSpentSeconds');
                 String originalDateTimeString =(String)worklog.get('created');
                 string timespent =(String)worklog.get('timeSpent');
@@ -40,7 +41,7 @@ public static void processWorklogs(Set<String> jiraKeys) {
 				Date createdDate = standardDateTimeString.date();
 				Time createdTime = standardDateTimeString.time();
                 String id = (String)worklog.get('id');
-                LogService.addLog(displayName,timespent,jiraKey,timeSpentSeconds,createdDate,createdTime,id); 
+                LogService.addLog(displayName,emailAddress,timespent,jiraKey,timeSpentSeconds,createdDate,createdTime,id); 
 
             }
         } else {

@@ -12,12 +12,11 @@ export default class MissingWorkLogs extends LightningElement {
     @track error;
     @track startDateError;
     @track endDateError;
-
+    value='Last 7 days';
     // Initialize dates as string in YYYY-MM-DD format
     endDate = new Date().toISOString().split('T')[0];
     startDate = new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0];
     columns = columns;
-
     dateRangeOptions = [
         { label: 'Last 7 days', value: 7 },
         { label: 'Last 15 days', value: 15 },
@@ -26,6 +25,7 @@ export default class MissingWorkLogs extends LightningElement {
 
     handleDaysChange(event) {
         const days = event.detail.value;
+        this.value = event.detail.value;
         this.startDate = new Date(new Date().setDate(new Date().getDate() - days)).toISOString().split('T')[0];
         this.endDate = new Date().toISOString().split('T')[0];
         this.validateDates();

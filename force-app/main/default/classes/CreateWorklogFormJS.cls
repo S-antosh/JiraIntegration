@@ -21,6 +21,7 @@ public with sharing class CreateWorklogFormJS {
                     recordData.JiraKey__c = (String) logEntry.get('jiraKey');
                     recordData.TimeSpent__c = (String) logEntry.get('timeSpent');
                     recordData.TimeSpentSeconds__c = (Decimal) logEntry.get('timeSpentSeconds');
+                    recordData.emailAddress__c = (String) logEntry.get('emailAddress');
                     
                     // Convert date to date type
                     String createdDateStr = (String) logEntry.get('createdDate');
