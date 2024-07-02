@@ -1,10 +1,7 @@
-.slds-align_absolute-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.slds-grid_align-end {
+    align-items: center; /* Align items vertically center */
 }
-.clickable-name {
-    color: blue;
-    cursor: pointer;
-    text-decoration: underline;
+
+.slds-wrap .slds-col {
+    margin-bottom: 1rem; /* Add margin to separate rows */
 }

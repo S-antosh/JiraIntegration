@@ -1,0 +1,67 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-card class="slds-p-around_medium">
+        <div class="slds-grid slds-gutters slds-p-around_large slds-wrap">
+            <div class="slds-col slds-size_1-of-8">
+                <lightning-combobox
+                    name="dateRange"
+                    label="Select Date Range"
+                    value={days}
+                    placeholder="Select Date Range"
+                    options={dateRangeOptions}
+                    onchange={handleDaysChange}
+                    
+                ></lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_1-of-8">
+                <lightning-input 
+                    type="date" 
+                    label="Start Date" 
+                    value={startDate} 
+                    onchange={handleStartDateChange}
+                    class={startDateClass}>
+                </lightning-input>
+                <template if:true={startDateError}>
+                    <div class="slds-form-element__help slds-theme_error">{startDateError}</div>
+                </template>
+            </div>
+            <div class="slds-col slds-size_1-of-8">
+                <lightning-input 
+                    type="date" 
+                    label="End Date" 
+                    value={endDate} 
+                    onchange={handleEndDateChange}
+                    class={endDateClass}>
+                </lightning-input>
+                <template if:true={endDateError}>
+                    <div class="slds-form-element__help slds-theme_error">{endDateError}</div>
+                </template>
+            </div>
+            
+        </div>
+        
+        <template if:true={workLogs}>
+            <div class="slds-scrollable_y slds-scrollable_x datatable-container">
+                <lightning-datatable
+                    key-field="id"
+                    data={workLogs}
+                    columns={columns}
+                    class="custom-datatable"
+                ></lightning-datatable>
+            </div>
+        </template>
+        
+        <template if:true={error}>
+            <div class="slds-text-color_error slds-p-around_medium">
+                Error fetching data: {error}
+            </div>
+        </template>
+
+        <template if:false={workLogs}>
+            <div class="slds-p-around_medium slds-text-align_center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+    </lightning-card>
+</template>

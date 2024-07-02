@@ -11,7 +11,7 @@ public class WorklogProcessor {
         try {
             res = http.send(req);
             if (res.getStatusCode() == 200) {
-                System.debug('Worklog Response for ' + jiraKey + ': ' + res.getBody());
+                
                 return (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
             } else {
                 System.debug('Error fetching worklog: ' + res.getStatusCode() + ' ' + res.getStatus());
@@ -28,7 +28,7 @@ public static void processWorklogs(Set<String> jiraKeys) {
         Map<String, Object> responseMap = getWorklog(jiraKey); // Fetch JSON response
         if (responseMap != null && responseMap.containsKey('worklogs')) {
             List<Object> worklogs = (List<Object>) responseMap.get('worklogs');
-            System.debug('Worklogs for Jira key ' + jiraKey + ': ' + worklogs.size());
+
  
             for (Object worklogObj : worklogs) {
                 Map<String, Object> worklog = (Map<String, Object>) worklogObj;
@@ -39,7 +39,8 @@ public static void processWorklogs(Set<String> jiraKeys) {
                 DateTime standardDateTimeString = DateTime.valueOf(originalDateTimeString.replace('T', ' '));
 				Date createdDate = standardDateTimeString.date();
 				Time createdTime = standardDateTimeString.time();
-                LogService.addLog(displayName,timespent,jiraKey,timeSpentSeconds,createdDate,createdTime); 
+                String id = (String)worklog.get('id');
+                LogService.addLog(displayName,timespent,jiraKey,timeSpentSeconds,createdDate,createdTime,id); 
 
             }
         } else {

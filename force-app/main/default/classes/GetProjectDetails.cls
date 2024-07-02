@@ -15,11 +15,7 @@ public class GetProjectDetails {
        
         // deserialization le chai list ra map ko format ma json lai view garna milne parxa, which is required to do
         List<Object> projects = (List<Object>) JSON.deserializeUntyped(responseBody);
-        system.debug(projects);
-        for(Object i : projects){
-            system.debug(i);
-            system.debug('\n');
-        }
+      
         Map<String, String> idNameMapper = new Map<String, String>();	// aile chai json bata aune id ra name liyera tellai map garera rakhne
         
         // Loop through each project
@@ -71,7 +67,7 @@ public class GetProjectDetails {
         projectDetailsList.add(projectDetailsMap);
         for (string detailname: projectDetailsMap.keySet()){
             Map<String, String> value = projectDetailsMap.get(detailname);
-            System.debug(value);
+         
         }
         return projectDetailsList;   
     }
