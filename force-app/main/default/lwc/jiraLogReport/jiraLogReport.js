@@ -4,6 +4,7 @@ import createWorklogFormJS from '@salesforce/apex/CreateWorklogFormJS.createWork
 import getSearchSets from '@salesforce/apex/SearchSetController.getSearchSets';
 import saveSearchSet from '@salesforce/apex/SearchSetController.saveSearchSet';
 import deleteSearchSet from '@salesforce/apex/SearchSetController.deleteSearchSet';
+import updateSearchSet from '@salesforce/apex/SearchSetController.updateSearchSet';
 
 export default class LogTable extends LightningElement {
     @track tableData = [];
@@ -20,6 +21,7 @@ export default class LogTable extends LightningElement {
     @track startDateError = '';
     @track endDateError = '';
     @track elseError = '';
+    @track isFetchClicked=false;
 
     // New Properties for Search Sets
     @track searchSets = [];
@@ -37,7 +39,9 @@ export default class LogTable extends LightningElement {
         if (new Date(this.startDate) > new Date()) {
             this.startDateError = 'Start Date should not be greater than today\'s Date';
         }
+    
         this.validateDates();
+        
     }
 
     handleEndDateChange(event) {
@@ -48,9 +52,11 @@ export default class LogTable extends LightningElement {
         } else if (new Date(this.endDate) > new Date()) {
             this.endDateError = 'End Date should not be greater than today\'s Date';
         }
+       
         this.validateDates();
+       
     }
-
+  
     validateDates() {
         if (this.startDate && this.endDate) {
             if (new Date(this.startDate) > new Date(this.endDate)) {
@@ -112,6 +118,22 @@ export default class LogTable extends LightningElement {
         }
     }
 
+    async updateSearchSet() {
+        this.isLoading = true;
+        try {
+            // Ensure selectedSearchSet is used as the searchSetId
+            await updateSearchSet({ searchSetId: this.selectedSearchSet, employeeNames: this.searchTerm });
+            await this.fetchSearchSets();
+            alert('Search set updated successfully');
+        } catch (error) {
+            console.error('Error updating search set:', error);
+            const errorMessage = error.body ? error.body.message : 'An unknown error occurred';
+            alert('Error updating search set: ' + errorMessage);
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
     async deleteSearchSet() {
         if (this.selectedSearchSet) {
             try {
@@ -149,6 +171,7 @@ export default class LogTable extends LightningElement {
                 const filteredLogs = this.filterLogsByDate(this.allLogs);
                 this.generateColumns();
                 this.processData(filteredLogs);
+                this.isFetchClicked=true
             } catch (error) {
                 console.error('Error processing logs:', error);
                 this.elseError = 'Error processing logs: ' + error.message;

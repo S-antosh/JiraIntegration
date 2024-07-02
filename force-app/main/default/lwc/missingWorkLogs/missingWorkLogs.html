@@ -1,30 +1,40 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
 <template>
-    <lightning-card title="Missing Work Logs">
-        <div class="slds-p-around_medium">
-            <lightning-combobox
-                name="dateRange"
-                label="Select Date Range"
-                value={days}
-                placeholder="Select Date Range"
-                options={dateRangeOptions}
-                onchange={handleDaysChange}
-            ></lightning-combobox>
+    <lightning-card class="slds-p-around_medium">
+        <div class="slds-grid slds-gutters slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-around_small">
+                <lightning-combobox
+                    name="dateRange"
+                    label="Select Date Range"
+                    value={days}
+                    placeholder="Select Date Range"
+                    options={dateRangeOptions}
+                    onchange={handleDaysChange}
+                ></lightning-combobox>
+            </div>
         </div>
         
         <template if:true={workLogs}>
-            <div class="slds-scrollable_y">
+            <div class="slds-scrollable_y slds-scrollable_x datatable-container">
                 <lightning-datatable
                     key-field="id"
                     data={workLogs}
                     columns={columns}
-                    resize-column-disabled="true"
+                    class="custom-datatable"
                 ></lightning-datatable>
             </div>
         </template>
         
         <template if:true={error}>
-            <div class="slds-text-color_error">
+            <div class="slds-text-color_error slds-p-around_medium">
                 Error fetching data: {error}
+            </div>
+        </template>
+
+        <template if:false={workLogs}>
+            <div class="slds-p-around_medium slds-text-align_center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
             </div>
         </template>
     </lightning-card>

@@ -13,8 +13,9 @@ export default class MissingWorkLogs extends LightningElement {
     columns = columns;
     @track days=7
     dateRangeOptions = [
-        { label: '1 Week', value: 7 },
-        { label: '15 Days', value: 15 }
+        { label: 'Last 7 days ', value: 7 },
+        { label: 'Last 15 days ', value: 15 },
+        { label: 'Last 30 days', value: 30 }
     ];
 
     @wire(getMissingWorkLogData,{days:'$days'})
