@@ -42,11 +42,12 @@
         </div>
         
         <template if:true={workLogs}>
-            <div class="slds-scrollable_y slds-scrollable_x datatable-container">
+            <div class="slds-scrollable_y slds-scrollable_x datatable-container slds-m-around_medium">
                 <lightning-datatable
                     key-field="id"
                     data={workLogs}
                     columns={columns}
+                    hide-checkbox-column="true"
                     class="custom-datatable"
                 ></lightning-datatable>
             </div>

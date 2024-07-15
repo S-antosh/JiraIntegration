@@ -1,4 +1,5 @@
 import { LightningElement, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getAllLogs from '@salesforce/apex/LogService.getAllLogs';
 import createWorklogFormJS from '@salesforce/apex/CreateWorklogFormJS.createWorklogFormJS';
 import getSearchSets from '@salesforce/apex/SearchSetController.getSearchSets';
@@ -6,7 +7,8 @@ import saveSearchSet from '@salesforce/apex/SearchSetController.saveSearchSet';
 import deleteSearchSet from '@salesforce/apex/SearchSetController.deleteSearchSet';
 import updateSearchSet from '@salesforce/apex/SearchSetController.updateSearchSet';
 
-export default class LogTable extends LightningElement {
+
+export default class LogTable extends NavigationMixin(LightningElement) {
     @track tableData = [];
     @track tableColumns = [];
     @track modalTableColumns = [];
@@ -22,11 +24,27 @@ export default class LogTable extends LightningElement {
     @track endDateError = '';
     @track elseError = '';
     @track isFetchClicked=false;
+    @track isEmployeeSearchSelected=true;
+    isEMployeeSelected=false;
 
     // New Properties for Search Sets
     @track searchSets = [];
     @track searchSetOptions = [];
     selectedSearchSet;
+
+    dateRangeOptions = [
+        { label: 'Last 7 days', value: 7 },
+        { label: 'Last 15 days', value: 15 },
+        { label: 'Last 30 days', value: 30 }
+    ];
+
+    handleDaysChange(event) {
+        const days = event.detail.value;
+        this.value = Number(event.detail.value);
+        this.startDate = new Date(new Date().setDate(new Date().getDate() - days)).toISOString().split('T')[0];
+        this.endDate = new Date().toISOString().split('T')[0];
+        this.validateDates();
+    }
 
     connectedCallback() {
         this.prefetchLogs();
@@ -38,6 +56,8 @@ export default class LogTable extends LightningElement {
         this.startDateError = '';
         if (new Date(this.startDate) > new Date()) {
             this.startDateError = 'Start Date should not be greater than today\'s Date';
+            this.tableColumns=[];
+            this.tableData=[];
         }
     
         this.validateDates();
@@ -48,9 +68,13 @@ export default class LogTable extends LightningElement {
         this.endDate = event.target.value;
         this.endDateError = '';
         if (new Date(this.endDate) < new Date(this.startDate)) {
-            this.endDateError = 'End Date should be greater than Start Date';
+            this.starDateError = 'End Date should be greater than Start Date';
+            this.tableColumns=[];
+            this.tableData=[];
         } else if (new Date(this.endDate) > new Date()) {
             this.endDateError = 'End Date should not be greater than today\'s Date';
+            this.tableColumns=[];
+            this.tableData=[];
         }
        
         this.validateDates();
@@ -61,6 +85,8 @@ export default class LogTable extends LightningElement {
         if (this.startDate && this.endDate) {
             if (new Date(this.startDate) > new Date(this.endDate)) {
                 this.endDateError = 'End Date should be greater than Start Date';
+                this.tableColumns=[];
+                this.tableData=[];
             }
         }
     }
@@ -111,6 +137,9 @@ export default class LogTable extends LightningElement {
         if (selectedSet) {
             this.searchTerm = selectedSet.Employee_Names__c;
         }
+        this.isEMployeeSelected=true;
+        this.isEmployeeSearchSelected=false;
+        
     }
 
     async saveSearchSet() {
@@ -149,6 +178,10 @@ export default class LogTable extends LightningElement {
         this.searchTerm = event.target.value.toLowerCase();
         // Force a re-render
         this.tableData = [...this.tableData];
+        this.isEMployeeSelected=true;
+        if(this.searchTerm==''){
+            this.isEmployeeSearchSelected=true;
+        }
     }
     
     get filteredData() {
@@ -178,6 +211,9 @@ export default class LogTable extends LightningElement {
             }
         } else {
             this.elseError = 'Please provide the correct dates';
+            setTimeout(() => {
+                this.elseError = null; // or set it to an empty string
+            }, 3000); 
         }
     }
 
@@ -210,11 +246,11 @@ export default class LogTable extends LightningElement {
                 type: 'action',
                 typeAttributes: { rowActions: actions }
             },
-            { label: 'Employee Name', fieldName: 'displayName', type: 'text' }
+            { label: 'Employee Name', fieldName: 'userDetails', type: 'url',typeAttributes:{label:{fieldName:'displayName'},target:'_blank'}}
         ];
 
         this.modalTableColumns = [
-            { label: 'JIRA Key', fieldName: 'jiraKey', type: 'text' }
+            { label: 'JIRA Key', fieldName: 'link', type: 'url',typeAttributes:{label:{fieldName:'jiraKey'},target:'_blank'} }
         ];
 
         let currentDate = new Date(this.startDate);
@@ -252,17 +288,21 @@ export default class LogTable extends LightningElement {
         const tableData = [];
         for (const displayName in logs) {
             if (logs.hasOwnProperty(displayName)) {
-                const logEntries = logs[displayName];
-                const rowData = { displayName, logEntries };
-                let sum = 0;
 
+                const logEntries = logs[displayName];
+                const accountId = logEntries.length > 0 ? logEntries[0].accountId : '';
+                const userDetails = `https://logreport.atlassian.net/jira/people/${accountId}`;
+    
+                const rowData = { displayName,displayNameField: displayName, userDetails, logEntries };
+                let sum = 0;
+    
                 logEntries.forEach(logEntry => {
                     const createdDate = logEntry.createdDate.split('T')[0];
                     const logHours = this.formatTime(logEntry.timeSpentSeconds);
                     if (!rowData[createdDate]) {
-                        rowData[createdDate] = '0d 0h 0m';
+                        rowData[createdDate] = '----';
                     }
-                    const [currentDays, currentHours, currentMinutes] = rowData[createdDate].match(/\d+/g).map(Number);
+                    const [currentDays, currentHours, currentMinutes] = rowData[createdDate] !== '----' ? rowData[createdDate].match(/\d+/g).map(Number) : [0, 0, 0];
                     const [newDays, newHours, newMinutes] = logHours.match(/\d+/g).map(Number);
                     const totalMinutes = currentMinutes + newMinutes;
                     const totalHours = currentHours + newHours + Math.floor(totalMinutes / 60);
@@ -270,20 +310,21 @@ export default class LogTable extends LightningElement {
                     rowData[createdDate] = `${totalDays}d ${totalHours % 8}h ${totalMinutes % 60}m`;
                     sum += logEntry.timeSpentSeconds;
                 });
-
+    
                 rowData.sum = this.formatTime(sum);
-
+    
                 this.tableColumns.forEach(column => {
                     if (!rowData[column.fieldName] && column.fieldName !== 'displayName' && column.fieldName !== 'sum') {
-                        rowData[column.fieldName] = '0d 0h 0m';
+                        rowData[column.fieldName] = '----';
                     }
                 });
-
+    
                 tableData.push(rowData);
             }
         }
         this.tableData = tableData;
     }
+    
 
     handleRowAction(event) {
         const actionName = event.detail.action.name;
@@ -293,6 +334,8 @@ export default class LogTable extends LightningElement {
             this.filteredLogEntries = this.filterLogEntriesByDate(row.logEntries);
             this.showModal = true;
             this.processModalData(this.filteredLogEntries);
+
+    
         }
     }
 
@@ -307,25 +350,59 @@ export default class LogTable extends LightningElement {
 
     processModalData(logEntries) {
         const tableData = [];
+        const dateSums = {};
+    
         for (const logEntry of logEntries) {
-            const rowData = { jiraKey: logEntry.jiraKey };
+            const rowData = { jiraKey:logEntry.jiraKey,link:`https://logreport.atlassian.net/browse/${logEntry.jiraKey}`};
             let sum = 0;
             const createdDate = logEntry.createdDate.split('T')[0];
             const logHours = this.formatTime(logEntry.timeSpentSeconds);
+    
             rowData[createdDate] = logHours;
             sum += logEntry.timeSpentSeconds;
             rowData.sum = this.formatTime(sum);
-
+    
             this.modalTableColumns.forEach(column => {
                 if (!rowData[column.fieldName] && column.fieldName !== 'jiraKey' && column.fieldName !== 'sum') {
-                    rowData[column.fieldName] = '0d 0h 0m';
+                    rowData[column.fieldName] = '----';
                 }
             });
-
+    
+            // Update the date sums
+            if (!dateSums[createdDate]) {
+                dateSums[createdDate] = 0;
+            }
+            dateSums[createdDate] += logEntry.timeSpentSeconds;
+    
             tableData.push(rowData);
         }
+    
+        // Create the summary row
+         let summaryRow = {jiraKey:'Total',link:`https://logreport.atlassian.net`};
+
+
+        
+        let totalSum = 0;
+        for (const date in dateSums) {
+            summaryRow[date] = this.formatTime(dateSums[date]);
+            totalSum += dateSums[date];
+        }
+        summaryRow.sum = this.formatTime(totalSum);
+    
+        // Ensure all columns are filled with "----" for the summary row where there are no entries
+        this.modalTableColumns.forEach(column => {
+            
+            if (!summaryRow[column.fieldName] && column.fieldName !== 'jiraKey' && column.fieldName !== 'sum') {
+                summaryRow[column.fieldName] = '----';
+            }
+          
+        });
+       
+    
+        tableData.push(summaryRow);
         this.filteredLogEntries = tableData;
     }
+    
 
     handleModalClose() {
         this.showModal = false;
@@ -346,24 +423,31 @@ export default class LogTable extends LightningElement {
         return this.elseError ? 'slds-has-error' : '';
     }
 
-    exportHandler(){
-        console.log('click vako xa ')
-       
+    exportHandler() {
+        
+        
         const rows = this.filteredData;
         if (!rows || rows.length === 0) {
             return;
         }
-
+    
         const columns = this.tableColumns.map(col => col.label);
         let csvContent = columns.join(",") + "\n";
-
+    
         rows.forEach(row => {
-            let rowData = this.tableColumns.map(col => row[col.fieldName]);
+            let rowData = this.tableColumns.map(col => {
+                if (col.fieldName === 'userDetails') {
+                    return row.displayNameField; // Use the display name for the export
+                }
+                return row[col.fieldName];
+            });
             csvContent += rowData.join(",") + "\n";
         });
-
-       this.createLinkForDownload(csvContent);
+        console.log(csvContent);
+    
+        this.createLinkForDownload(csvContent);
     }
+    
   
     createLinkForDownload(csvFile) {
         const downLink = document.createElement("a");
