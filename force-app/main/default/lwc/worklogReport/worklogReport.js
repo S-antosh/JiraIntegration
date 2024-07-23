@@ -8,6 +8,7 @@ export default class WorklogReport extends LightningElement {
     @track selectedMonthYear = '';
     @track searchTerm = '';
     @track selectMonthYearError = '';
+    @track isFetchClicked=false;
 
     handleMonthYearChange(event) {
         this.selectedMonthYear = event.target.value;
@@ -39,6 +40,7 @@ export default class WorklogReport extends LightningElement {
                 const logs = JSON.parse(result);
                 this.generateColumns();
                 this.processData(logs);
+                this.isFetchClicked=true;
             } catch (error) {
                 console.error('Error fetching logs:', error);
             } finally {

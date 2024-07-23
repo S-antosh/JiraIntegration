@@ -1,8 +1,7 @@
 public with sharing class MissingWorklog {
     @AuraEnabled(cacheable=true)
-    public static Map<String, List<MissingWorkLogData>> getMissingWorkLogData(Integer days) {
-        Date today = Date.today();
-        Date startDate = today.addDays(-days);
+    public static Map<String, List<MissingWorkLogData>> getMissingWorkLogData(Date startDate ,Date endDate) {
+
 
         List<WorkLog__c> worklogs = [SELECT Employee__c, emailAddress__c, Created_Date__c FROM WorkLog__c ];
 
@@ -25,7 +24,7 @@ public with sharing class MissingWorklog {
         // Iterate over employees and dates to find missing work logs
         for (String employee : employeeWorkLogs.keySet()) {
             List<MissingWorkLogData> missingLogs = new List<MissingWorkLogData>();
-            for (Date date1 = startDate; date1 <= today; date1 = date1.addDays(1)) {
+            for (Date date1 = startDate; date1 <= endDate; date1 = date1.addDays(1)) {
                 // Check if date is Saturday or Sunday
                 Datetime dt = DateTime.newInstance(date1.year(), date1.month(), date1.day());
                 String dayOfWeekString = dt.format('EEEE'); // Get day of week as string

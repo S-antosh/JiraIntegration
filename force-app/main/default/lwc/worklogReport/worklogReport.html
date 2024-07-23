@@ -1,29 +1,37 @@
-<!-- sldsValidatorIgnore -->
-<!-- sldsValidatorIgnore -->
 <template>
     <lightning-card title="Monthly Worklog Report">
-        <div class="slds-m-around_small">
-            <div class="slds-grid slds-gutters">
-                <div class="slds-col slds-size_1-of-5">
-                    <lightning-input type="month" label="Select Month and Year" value={selectedMonthYear} onchange={handleMonthYearChange} class={selectedMonthYearClass}></lightning-input>
-                    <template if:true={selectMonthYearError}>
-                        <div
-                            class="slds-form-element__help slds-theme_error">
+
+        <div class="slds-grid slds-wrap slds-col slds-m-around_medium slds-gutters_small slds-grid_align-end">
+            
+            <!-- Month and Year Input -->
+            <div class="slds-align-bottom slds-m-horizontal_small">
+                <lightning-input type="month" label="Select Month and Year" value={selectedMonthYear}
+                    onchange={handleMonthYearChange} class={selectedMonthYearClass}
+                    placeholder="select month"></lightning-input>
+                <template if:true={selectMonthYearError}>
+                    <div class="slds-form-element__help slds-text-color_error">
                         {selectMonthYearError}
-                        </div>
-                    </template>
-                </div>
-                
-                <div class="slds-col slds-size_1-of-5">
-                    <lightning-input type="text" label="Employee" value={searchTerm} onchange={handleEmployeeChange}></lightning-input>
-                </div>
-                <div class="slds-col slds-size_1-of-5 slds-align_absolute-center">
-                    <lightning-button label="Fetch Logs" onclick={fetchLogs}></lightning-button>
-                </div>
-                <div class="slds-col slds-size_1-of-5 slds-align_absolute-center">
-                    <lightning-button label="Export" onclick={ExportData}></lightning-button>
-                </div>
+                    </div>
+                </template>
             </div>
+
+            <!-- Fetch Logs Button -->
+            <div class="slds-align-bottom slds-m-horizontal_small">
+                <lightning-button label="Fetch Logs" variant="brand" onclick={fetchLogs}></lightning-button>
+            </div>
+
+            <!-- Employee Input and Export CSV Button -->
+            <template if:true={isFetchClicked}>
+                <div class="slds-align-bottom slds-m-horizontal_small">
+                    <lightning-input type="text" label="Employee" value={searchTerm} placeholder="Search Employee.."
+                        onchange={handleEmployeeChange}></lightning-input>
+                </div>
+                <div class="slds-align-bottom slds-m-horizontal_small">
+                    <lightning-button label="Export CSV" variant="brand" onclick={ExportData}
+                        icon-name="utility:download"></lightning-button>
+                </div>
+            </template>
+          
         </div>
 
         <!-- Spinner -->
@@ -36,12 +44,8 @@
         <!-- Data Table -->
         <template if:false={isLoading}>
             <div class="slds-m-around_medium">
-                <lightning-datatable
-                    key-field="sNo    "
-                    data={filteredData}
-                    columns={tableColumns}
-                    hide-checkbox-column="true"
-                ></lightning-datatable>
+                <lightning-datatable key-field="sNo" data={filteredData} columns={tableColumns}
+                    hide-checkbox-column="true"></lightning-datatable>
             </div>
         </template>
     </lightning-card>

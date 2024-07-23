@@ -254,7 +254,12 @@
         </platformActionListItems>
     </platformActionList>
     <relatedLists>
-        <relatedList>RelatedFileList</relatedList>
+        <fields>NAME</fields>
+        <fields>Employee__c</fields>
+        <fields>timespent__c</fields>
+        <fields>Created_Date__c</fields>
+        <fields>emailAddress__c</fields>
+        <relatedList>WorkLog__c.Jira__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
@@ -266,7 +271,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00hdL000000kQku</masterLabel>
+        <masterLabel>00hdL000002vmcq</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>
