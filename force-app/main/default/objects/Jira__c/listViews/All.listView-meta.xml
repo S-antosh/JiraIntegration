@@ -3,8 +3,8 @@
     <fullName>All</fullName>
     <columns>NAME</columns>
     <columns>Assignee__c</columns>
-    <columns>Actual_Time_In_Seconds__c</columns>
-    <columns>Aggregate_Time_Tracking__c</columns>
+    <columns>Expected_Time_Tracking__c</columns>
+    <columns>Actual_Time_Tracking__c</columns>
     <columns>Status__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>

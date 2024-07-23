@@ -4,6 +4,8 @@
         <members>CreateWorklogFormJS</members>
         <members>GetProjectDetails</members>
         <members>JiraController</members>
+        <members>JiraGlobalVariables</members>
+        <members>JiraRecordBatchProcessor</members>
         <members>JiraRestClient</members>
         <members>LogService</members>
         <members>MissingWorklog</members>
@@ -11,6 +13,7 @@
         <members>MissingWorklogEmailSender</members>
         <members>SearchSetController</members>
         <members>WorklogProcessor</members>
+        <members>scheduleWorkLog</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -81,7 +84,6 @@
         <members>deleteJiraRecords</members>
         <members>jiraLogReport</members>
         <members>missingWorkLogs</members>
-        <members>monthyLogReport</members>
         <members>picklistForProject</members>
         <members>worklogReport</members>
         <name>LightningComponentBundle</name>
